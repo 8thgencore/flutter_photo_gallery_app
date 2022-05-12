@@ -1,11 +1,17 @@
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+
 import 'package:photo_gallery_app/keys.dart';
 import 'package:photo_gallery_app/services/network_helper.dart';
 
-class GalleryData extends ChangeNotifier {
-  List<String> photos = [];
+part "gallery_state.dart";
 
-  Future<void> getImages() async {
+class GalleryCubit extends Cubit<GalleryState> {
+  GalleryCubit() : super(GalleryInitial());
+
+  Future<void> getPhotos() async {
+    emit(GalleryLoading());
     List<String> images = [];
     String url = "https://pixabay.com/api/?key=$pixabyApiKey&image_type=photo";
 
@@ -17,7 +23,6 @@ class GalleryData extends ChangeNotifier {
       images.add(hitsList[i]["largeImageURL"]);
     }
 
-    photos = images;
-    notifyListeners();
+    emit(ImagesLoaded(images: images));
   }
 }
